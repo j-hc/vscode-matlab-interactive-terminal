@@ -117,18 +117,19 @@ class MatlabInterface:
 
     def interactive_loop(self):
         loop=True # Looping allows for an interactive terminal
-
+        mfiles = list(map(lambda w: w.split('.')[0], filter(lambda w: w.endswith(".m"), os.listdir())))
+        mfilesStr = ' '.join(mfiles)
         while loop and not import_fail:
             print('>>> ', end='')
             command = input()
 
             if command=="exit" or command=="exit()": # Keywords to leave the engine
                 loop=False
-
             elif command=="clc" or command=="clc()": # matlab terminal clearing must be reimplemented
                 self.clear()
-
             else:
+                if command in mfiles:
+                    command = f'clear {mfilesStr}; {command}'
                 try:
                     self.eng.eval(command, nargout=0) # Feed the instructions to Matlab eval
 
