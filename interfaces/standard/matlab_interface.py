@@ -21,6 +21,9 @@ except ImportError:
 else:
     import_fail = False
 
+import signal
+signal.signal(signal.SIGINT, lambda _signum, _frame: print())
+
 class MatlabInterface:
     global import_fail
 
@@ -121,7 +124,10 @@ class MatlabInterface:
         mfilesStr = ' '.join(mfiles)
         while loop and not import_fail:
             print('>>> ', end='')
-            command = input()
+            try:
+                command = input()
+            except EOFError:
+                continue
 
             if command=="exit" or command=="exit()": # Keywords to leave the engine
                 loop=False
